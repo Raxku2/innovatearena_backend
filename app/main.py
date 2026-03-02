@@ -18,4 +18,5 @@ app.include_router(PaymentRouter)
 
 @app.get("/")
 def root():
-    return RedirectResponse("/docs")
+    # return RedirectResponse("/docs")
+    return "ok"
