@@ -51,7 +51,7 @@ def put_schedule(payload: scheduleDataType, sch_id: str):
         if not res:
             return Response(status_code=status.HTTP_501_NOT_IMPLEMENTED)
 
-        return Response(res, status_code=status.HTTP_200_OK)
+        return Response(status_code=status.HTTP_200_OK)
     except Exception as err:
         return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)
 
@@ -64,7 +64,7 @@ def delete_schedule(sch_id: str):
         if not res:
             return Response(status_code=status.HTTP_501_NOT_IMPLEMENTED)
 
-        return Response(res, status_code=status.HTTP_204_NO_CONTENT)
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
     except Exception as err:
         return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)
 
@@ -90,7 +90,7 @@ def put_rule(payload: rulesDataType, rule_id: str):
         if not res:
             return Response(status_code=status.HTTP_501_NOT_IMPLEMENTED)
 
-        return Response(res, status_code=status.HTTP_200_OK)
+        return Response(status_code=status.HTTP_200_OK)
     except Exception as err:
         return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)
 
@@ -103,7 +103,7 @@ def delete_rule(rule_id: str):
         if not res:
             return Response(status_code=status.HTTP_501_NOT_IMPLEMENTED)
 
-        return Response(res, status_code=status.HTTP_204_NO_CONTENT)
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
     except Exception as err:
         return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)
 
@@ -129,7 +129,7 @@ def put_organizer(orga_id: str, payload: eventOrganizers):
         if not res:
             return Response(status_code=status.HTTP_501_NOT_IMPLEMENTED)
 
-        return Response(res, status_code=status.HTTP_200_OK)
+        return Response(status_code=status.HTTP_200_OK)
     except Exception as err:
         return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)
 
@@ -142,6 +142,6 @@ def delete_organizer(orga_id: str):
         if not res:
             return Response(status_code=status.HTTP_501_NOT_IMPLEMENTED)
 
-        return Response(res, status_code=status.HTTP_204_NO_CONTENT)
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
     except Exception as err:
         return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)
