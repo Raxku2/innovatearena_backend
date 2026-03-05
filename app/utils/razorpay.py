@@ -11,7 +11,7 @@ RAZOR_KEY_ID = getenv("FA_RAZOR_KEY")
 RAZOR_SECRATE = getenv("FA_RAZZOR_SEC")
 client = Client(auth=(RAZOR_KEY_ID, RAZOR_SECRATE))
 
-def orderCreator(notes: dict | None = None, order_amount: int = 5) -> dict | None:
+def orderCreator(notes: dict | None = None, order_amount: int = 50) -> dict | None:
     try:
         order_amount = order_amount * 100  # Amount in paise (500 = ₹5)
         order_currency = "INR"
