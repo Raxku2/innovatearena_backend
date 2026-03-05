@@ -60,9 +60,9 @@ def verify_order(payload: orderVerifyModel):
 
 
 @router.post("/token/{user_id}")
-def post_token(user_id: str, payload: orderCreateNotes):
+def post_token(user_id: str):
     try:
-        token = create_payment_token(user_id, payload)
+        token = create_payment_token(user_id)
 
         if not token:
             return Response(status_code=status.HTTP_406_NOT_ACCEPTABLE)
