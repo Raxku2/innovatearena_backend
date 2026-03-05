@@ -28,8 +28,8 @@ def createUser(username: str, useremail: str, userdp: str, team_id: ObjectId):
             return str(status.upserted_id)
 
         # if the document already existed, fetch its _id
-        existing_doc = user_coll.find_one({"email": useremail}, {"_id": 1})
-        return str(existing_doc["_id"]) if existing_doc else False
+        # existing_doc = user_coll.find_one({"email": useremail}, {"_id": 1})
+        # return str(existing_doc["_id"]) if existing_doc else False
 
     except Exception as err:
         print("Error while auth, add user on db:", err)

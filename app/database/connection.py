@@ -13,6 +13,7 @@ db_a = db_a_client["innovatearena"]
 user_coll = db_a["User"]
 event_coll = db_a["Event"]
 payments_coll = db_a["Payments"]
+token_coll = db_a["token"]
 
 
 def pingMongoDB_1():

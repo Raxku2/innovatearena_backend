@@ -4,7 +4,11 @@ from bson import ObjectId
 from app.database.user import showUserInfo
 from app.utils.razorpay import orderCreator, orderValidator
 from app.models.payments import orderCreateNotes, orderVerifyModel
-from app.database.payments import mark_sucessful_payment
+from app.database.payments import (
+    mark_sucessful_payment,
+    create_payment_token,
+    read_payment_token,
+)
 
 router = APIRouter(prefix="/pay", tags=["Razorpay"])
 
@@ -50,6 +54,35 @@ def verify_order(payload: orderVerifyModel):
             return Response(status_code=status.HTTP_100_CONTINUE)
 
         return JSONResponse(order, status_code=status.HTTP_200_OK)
+
+    except Exception as err:
+        raise Exception(f"{err} : error on order route")
+
+
+@router.post("/token/{user_id}")
+def post_token(user_id: str, payload: orderCreateNotes):
+    try:
+        token = create_payment_token(user_id, payload)
+
+        if not token:
+            return Response(status_code=status.HTTP_406_NOT_ACCEPTABLE)
+
+        return JSONResponse(token, status_code=status.HTTP_201_CREATED)
+
+    except Exception as err:
+        raise Exception(f"{err} : error on order route")
+
+
+@router.get("/token/{token_id}")
+def get_token(token_id: str):
+    try:
+
+        token_data = read_payment_token(token_id)
+
+        if not token_data:
+            return Response(status_code=status.HTTP_401_UNAUTHORIZED)
+
+        return JSONResponse(token_data, status_code=status.HTTP_200_OK)
 
     except Exception as err:
         raise Exception(f"{err} : error on order route")
