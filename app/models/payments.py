@@ -6,8 +6,7 @@ class orderCreateNotes(BaseModel):
     team_id: str
     username: str
 
-
 class orderVerifyModel(orderCreateNotes):
     order_id: str
     payment_id: str
-    signeture: str
+    signature: str
