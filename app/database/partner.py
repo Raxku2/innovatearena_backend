@@ -24,8 +24,12 @@ def createPartner(data: partnerInfo, user_id: str):
     if not info_data:
         raise ValueError("No data provided for update")
 
+    if info_data.get("payment_status") is True:
+        return False
+
     try:
         partner_data = showPartner(info_data.get("email"))
+
         user_data = user_coll.find_one(
             {"_id": ObjectId(user_id)}, {"name": 1, "email": 1, "team_id": 1}
         )
