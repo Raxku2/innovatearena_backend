@@ -40,11 +40,11 @@ def create_payment_token(user_id: str):
     try:
         user_data = user_coll.find_one(
             {"_id": ObjectId(user_id)},
-            {"email": 1, "username": 1, "team_id": 1, "phone": 1},
+            {"email": 1, "username": 1, "team_id": 1, "phone": 1, "_id": 0},
         )
         if user_data:
             token_data = convert_objectid_in_doc(user_data)
-
+        token_data["user_id"] = user_id
         token_data["created_at"] = str(datetime.utcnow())
 
         status = token_coll.insert_one(token_data)
