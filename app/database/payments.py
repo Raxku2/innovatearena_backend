@@ -1,5 +1,6 @@
-from app.database.connection import user_coll, payments_coll
-from app.models.payments import orderVerifyModel
+from app.database.connection import user_coll, payments_coll, token_coll
+from app.models.payments import orderVerifyModel, orderCreateNotes
+from app.utils.mongo_id_handeler import convert_objectid_in_doc
 from bson import ObjectId
 from datetime import datetime
 
@@ -30,6 +31,42 @@ def mark_sucessful_payment(data: orderVerifyModel):
             return False
 
         return True
+
+    except Exception as err:
+        raise Exception(f"error while update user_info: {err} ")
+
+
+def create_payment_token(user_id: str):
+    try:
+        user_data = user_coll.find_one(
+            {"_id": ObjectId(user_id)},
+            {"email": 1, "username": 1, "team_id": 1, "phone": 1, "_id": 0},
+        )
+        if user_data:
+            token_data = convert_objectid_in_doc(user_data)
+        token_data["user_id"] = user_id
+        token_data["created_at"] = str(datetime.utcnow())
+
+        status = token_coll.insert_one(token_data)
+
+        if not status.inserted_id:
+            return None
+
+        return str(status.inserted_id)
+
+    except Exception as err:
+        raise Exception(f"error while update user_info: {err} ")
+
+
+def read_payment_token(token: str):
+    # token_data = data.dict()
+    try:
+        status = token_coll.find_one({"_id": ObjectId(token)}, {"_id": 0})
+
+        if not status:
+            return None
+
+        return convert_objectid_in_doc(status)
 
     except Exception as err:
         raise Exception(f"error while update user_info: {err} ")

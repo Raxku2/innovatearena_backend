@@ -38,3 +38,16 @@ def updateUserInfo(data: userInfo, user_id: str):
 
     except Exception as err:
         raise Exception(f"error while update user_info: {err} ")
+
+
+def is_user_admin(user_id: str):
+    try:
+        status = user_coll.find_one({"_id": ObjectId(user_id), "type": "root"})
+
+        if not status:
+            return False
+
+        return True
+
+    except Exception as err:
+        raise Exception(f"error verify user_admin: {err} ")

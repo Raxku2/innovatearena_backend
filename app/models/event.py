@@ -9,17 +9,16 @@ class eventDataType(BaseModel):
 
 
 class eventOrganizers(BaseModel):
-    name: str
-    role: str
-    email: str
+    name: str | None = None
+    role: str | None = None
+    dp: str | None = None
+
 
 class scheduleDataType(BaseModel):
     title: str | None = None
     time: str | None = None
-    description: str | None = None
+
 
 class rulesDataType(BaseModel):
-    title:str
-    description:str
-
-
+    title: str
+    description: str
