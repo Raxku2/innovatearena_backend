@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.openapi.docs import get_swagger_ui_html
 from app.routers.auth.googleAuthHandeller import router as AuthRouter
 from app.routers.user.user_info import router as UserRouter
 from app.routers.pay.payment import router as PaymentRouter
@@ -7,8 +8,16 @@ from app.middilwares.cors import cors_middleware
 from app.database.connection import pingMongoDB_1
 from app.routers.event.event import router as EventRouter
 from app.routers.root.root import router as AdminRouter
+from app.utils.authhandeller import authenticate
 
-app = FastAPI(title="Innivatearena", version="pichu")
+
+app = FastAPI(
+    title="Innovatearena",
+    version="pichu",
+    docs_url=None,
+    redoc_url=None,
+    # openapi_url=None,
+)
 
 cors_middleware(app)
 
@@ -22,7 +31,11 @@ app.include_router(AdminRouter)
 @app.get("/")
 def root():
     return RedirectResponse("/docs")
-    # return "ok"
+
+
+@app.get("/docs", include_in_schema=False)
+def protected_docs(user: str = Depends(authenticate)):
+    return get_swagger_ui_html(openapi_url="/openapi.json", title="Secure Docs")
 
 
 @app.get("/health")
