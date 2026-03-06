@@ -26,6 +26,9 @@ def createPartner(data: partnerInfo, user_id: str):
 
     try:
         partner_data = showPartner(info_data.get("email"))
+        if partner_data.get("payment_status") is True:
+            return False
+
         user_data = user_coll.find_one(
             {"_id": ObjectId(user_id)}, {"name": 1, "email": 1, "team_id": 1}
         )
