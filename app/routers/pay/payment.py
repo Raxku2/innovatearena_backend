@@ -120,7 +120,7 @@ def get_token(token_id: str):
         raise Exception(f"{err} : error on order route")
 
 
-@router.get("/invoice/{user_id}")
+@router.get("/invoice/{team_id}")
 def get_invoice(team_id: str, pay_id: str):
     try:
         invoice_info = load_order_info(payment_id=pay_id, team_id=team_id)
