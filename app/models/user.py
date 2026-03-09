@@ -16,3 +16,8 @@ class partnerInfo(BaseModel):
 
 class partnerInfoUpdate(partnerInfo):
     team_id: str | None = None
+
+
+class adminSetter(BaseModel):
+    target: str
+    param: str

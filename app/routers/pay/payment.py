@@ -2,13 +2,14 @@ from fastapi import APIRouter, status, Response, HTTPException
 from fastapi.responses import JSONResponse
 from bson import ObjectId
 from app.database.user import showUserInfo
-from app.utils.razorpay import orderCreator, orderValidator
+from app.utils.razorpay import orderCreator, orderValidator, load_order_info
 from app.models.payments import orderCreateNotes, orderVerifyModel
 from app.database.payments import (
     mark_sucessful_payment,
     create_payment_token,
     read_payment_token,
 )
+
 
 router = APIRouter(prefix="/pay", tags=["Razorpay"])
 
@@ -117,3 +118,14 @@ def get_token(token_id: str):
 
     except Exception as err:
         raise Exception(f"{err} : error on order route")
+
+
+@router.get("/invoice/{team_id}")
+def get_invoice(team_id: str, pay_id: str):
+    try:
+        invoice_info = load_order_info(payment_id=pay_id, team_id=team_id)
+        if not invoice_info:
+            return Response(status_code=status.HTTP_404_NOT_FOUND)
+        return JSONResponse(content=invoice_info)
+    except Exception as err:
+        return Response(status_code=status.HTTP_406_NOT_ACCEPTABLE)

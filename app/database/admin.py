@@ -1,6 +1,11 @@
 from app.database.connection import user_coll
 from app.database.user import is_user_admin
 from bson import ObjectId
+from app.utils.mongo_id_handeler import (
+    convert_objectid_in_list,
+    convert_objectid_in_doc,
+)
+from collections import defaultdict
 
 
 def showStatics(root_id: str):
@@ -73,3 +78,95 @@ def showStatics(root_id: str):
 
     except Exception as err:
         raise Exception(f"{err} : while make staticties")
+
+
+def showAdmin(root_id: str) -> list | None:
+    try:
+        if not is_user_admin(root_id):
+            raise Exception("Unauth")
+
+        result = user_coll.find({"type": "root"}, {"email": 1, "_id": 0})
+
+        if not result:
+            return None
+
+        return convert_objectid_in_list(result)
+
+    except Exception as err:
+        raise Exception(f"{err} : while read admins")
+
+
+def setAdmin(root_id: str, target_id: str, param: str):
+    try:
+        if not is_user_admin(root_id):
+            raise Exception("Unauth")
+
+        result = user_coll.update_one({"email": target_id}, {"$set": {"type": param}})
+
+        if result.matched_count == 0:
+            return False
+
+        return True
+
+    except Exception as err:
+        raise Exception(f"{err} : while make admin")
+
+
+def getRegInfo(root_id: str):
+    try:
+        if not is_user_admin(root_id):
+            raise Exception("Unauth")
+        data_cursor = user_coll.find(
+            {"reg_status": True, "payment_status": True},
+            {"team_id": 1, "name": 1, "dept": 1, "batch": 1, "present": 1},
+        )
+
+        # Initialize a dictionary to group by team_id
+        grouped_dict = defaultdict(list)
+
+        for user in data_cursor:
+            # Use the helper to handle the ObjectId before grouping
+            # print(user)
+            clean_user = convert_objectid_in_doc(user)
+            tid = clean_user.get("team_id")
+
+            # Append the user details to the specific team list
+            grouped_dict[tid].append(
+                {
+                    "name": clean_user.get("name"),
+                    "dept": clean_user.get("dept"),
+                    "batch": clean_user.get("batch"),
+                    "present": clean_user.get("present"),
+                }
+            )
+
+        # Format the final output to match the flat CSV requirement with visual grouping
+        data = []
+        team_counter = 1
+
+        for tid, members in grouped_dict.items():
+            for index, member in enumerate(members):
+                # Apply the team index (1, 2, 3...) only to the first member (index 0)
+                # For all other members in the same team, leave it blank ("")
+                display_tid = team_counter if index == 0 else ""
+
+                # Create the flat row dictionary matching your exact CSV headers
+                data.append(
+                    {
+                        "team id": display_tid,
+                        "name": member.get("name", ""),
+                        "dept": member.get("dept", ""),
+                        "batch": member.get("batch", ""),
+                        "attendence": member.get(
+                            "present", "TRUE"
+                        ),  # mapping your 'present' key to 'attendence'
+                    }
+                )
+
+            # Increment the counter for the next team in the grouped_dict
+            team_counter += 1
+
+        return data
+    except Exception as err:
+        raise Exception(f"{err} : while make admin")
+    pass
