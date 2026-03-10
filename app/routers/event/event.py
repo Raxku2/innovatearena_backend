@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Response, status
+from fastapi import APIRouter, Response, status, Request
 from fastapi.responses import JSONResponse
 from app.models.event import scheduleDataType, rulesDataType, eventOrganizers
 from app.database.event import (
@@ -12,6 +12,9 @@ from app.database.event import (
     update_event_rule,
     delete_event_orga,
     delete_event_rule,
+    update_registration,
+    update_attendence,
+    update_submits,
 )
 
 router = APIRouter(prefix="/event", tags=["Event"])
@@ -143,5 +146,49 @@ def delete_organizer(orga_id: str):
             return Response(status_code=status.HTTP_501_NOT_IMPLEMENTED)
 
         return Response(status_code=status.HTTP_204_NO_CONTENT)
+    except Exception as err:
+        return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)
+
+
+@router.put("/reg/{root_id}")
+def put_registration_process(root_id: str, reg_state: bool):
+    try:
+        res = update_registration(root_id=root_id, event_status=reg_state)
+
+        if not res:
+            return Response(status_code=status.HTTP_501_NOT_IMPLEMENTED)
+
+        return Response(status_code=status.HTTP_200_OK)
+    except Exception as err:
+        return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)
+
+
+@router.put("/attendence/{root_id}")
+def put_attendence_process(root_id: str, attendence_state: bool, request: Request):
+    try:
+        res = update_attendence(
+            root_id=root_id, attendence_state=attendence_state, request=request
+        )
+
+        if not res:
+            return Response(status_code=status.HTTP_501_NOT_IMPLEMENTED)
+
+        return Response(status_code=status.HTTP_200_OK)
+    except Exception as err:
+        # print(err)
+        return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)
+
+
+@router.put("/submits/{root_id}")
+def put_submit_process(root_id: str, submit_state: bool, request: Request):
+    try:
+        res = update_submits(
+            root_id=root_id, submit_status=submit_state, request=request
+        )
+
+        if not res:
+            return Response(status_code=status.HTTP_501_NOT_IMPLEMENTED)
+
+        return Response(status_code=status.HTTP_200_OK)
     except Exception as err:
         return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)

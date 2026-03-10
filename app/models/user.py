@@ -21,3 +21,9 @@ class partnerInfoUpdate(partnerInfo):
 class adminSetter(BaseModel):
     target: str
     param: str
+
+
+class projectSubmit(BaseModel):
+    project_title: str
+    deployment: str
+    repo: str

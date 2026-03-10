@@ -14,8 +14,8 @@ from app.utils.authhandeller import authenticate
 app = FastAPI(
     title="Innovatearena",
     version="pichu",
-    docs_url=None,
-    redoc_url=None,
+    # docs_url=None,
+    # redoc_url=None,
     # openapi_url=None,
 )
 
@@ -33,9 +33,9 @@ def root():
     return RedirectResponse("/docs")
 
 
-@app.get("/docs", include_in_schema=False)
-def protected_docs(user: str = Depends(authenticate)):
-    return get_swagger_ui_html(openapi_url="/openapi.json", title="Secure Docs")
+# @app.get("/docs", include_in_schema=False)
+# def protected_docs(user: str = Depends(authenticate)):
+#     return get_swagger_ui_html(openapi_url="/openapi.json", title="Secure Docs")
 
 
 @app.get("/health")

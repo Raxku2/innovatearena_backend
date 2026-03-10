@@ -3,6 +3,8 @@ from app.database.user import is_user_admin
 from app.utils.mongo_id_handeler import convert_objectid_in_doc
 from app.models.event import scheduleDataType, rulesDataType, eventOrganizers
 from bson import ObjectId
+from fastapi import Request
+from app.utils.tracker import get_client_ip
 
 
 def show_event_data():
@@ -167,3 +169,71 @@ def delete_event_orga(orga_id: str):
 
     except Exception as err:
         raise Exception(f"{err} : deleting organizer ")
+
+
+def update_registration(root_id: str, event_status: bool):
+    try:
+        admin_status = is_user_admin(root_id)
+        if not admin_status:
+            return None
+
+        status = event_coll.update_one(
+            {"_id": "event"},
+            {"$set": {"registration_process": event_status}},
+        )
+
+        if status.matched_count == 0:
+            return None
+
+        return True
+
+    except Exception as err:
+        raise Exception(f"{err} : updating registration state ")
+
+
+def update_attendence(root_id: id, attendence_state: bool, request: Request):
+    try:
+        admin_status = is_user_admin(root_id)
+        if not admin_status:
+            return None
+
+        ip_of_venue = get_client_ip(request=request)
+        if not ip_of_venue:
+            return False
+
+        status = event_coll.update_one(
+            {"_id": "event"},
+            {"$set": {"attendence_process": attendence_state, "ip_addr": ip_of_venue}},
+        )
+
+        if status.matched_count == 0:
+            return None
+
+        return True
+
+    except Exception as err:
+        raise Exception(f"{err} : updating attendence state ")
+
+
+def update_submits(root_id: str, submit_status: bool, request: Request):
+    try:
+        admin_status = is_user_admin(root_id)
+        if not admin_status:
+            return None
+
+        ip_of_venue = get_client_ip(request=request)
+        if not ip_of_venue:
+            return False
+
+        status = event_coll.update_one(
+            {"_id": "event"},
+            {"$set": {"submit_process": submit_status, "ip_addr": ip_of_venue}},
+        )
+
+        if status.matched_count == 0:
+            return None
+
+        return True
+
+    except Exception as err:
+        raise Exception(f"{err} : updating submit state ")

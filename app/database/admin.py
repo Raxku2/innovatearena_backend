@@ -116,6 +116,7 @@ def getRegInfo(root_id: str):
     try:
         if not is_user_admin(root_id):
             raise Exception("Unauth")
+
         data_cursor = user_coll.find(
             {"reg_status": True, "payment_status": True},
             {"team_id": 1, "name": 1, "dept": 1, "batch": 1, "present": 1},
@@ -168,5 +169,4 @@ def getRegInfo(root_id: str):
 
         return data
     except Exception as err:
-        raise Exception(f"{err} : while make admin")
-    pass
+        raise Exception(f"{err} : while make reg data")

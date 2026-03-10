@@ -1,9 +1,9 @@
-from fastapi import APIRouter, status, Response
+from fastapi import APIRouter, status, Response, Request
 from fastapi.responses import JSONResponse
 from app.utils.authhandeller import handle_success
 from bson import ObjectId
-from app.models.user import userInfo, partnerInfo, partnerInfoUpdate
-from app.database.user import showUserInfo, updateUserInfo
+from app.models.user import userInfo, partnerInfo, partnerInfoUpdate, projectSubmit
+from app.database.user import showUserInfo, updateUserInfo, mark_attendence, add_submits
 from app.database.partner import (
     showPartner,
     createPartner,
@@ -92,5 +92,37 @@ def delete_partner_info(user_id: str):
 
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     except Exception as err:
+        # print(err)
+        return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)
+
+
+@router.put("/attendence/{team_id}")
+def put_attendence(team_id: str, request: Request):
+    try:
+        res = mark_attendence(team_id=team_id, request=request)
+
+        if res == False:
+            return Response(status_code=status.HTTP_501_NOT_IMPLEMENTED)
+        if res == None:
+            return Response(status_code=status.HTTP_401_UNAUTHORIZED)
+
+        return Response(status_code=status.HTTP_200_OK)
+    except Exception as err:
         print(err)
+        return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)
+
+
+@router.put("/project/{team_id}")
+def put_project(team_id: str, request: Request, payload: projectSubmit):
+    try:
+        res = add_submits(team_id=team_id, request=request, data=payload)
+
+        if res == False:
+            return Response(status_code=status.HTTP_501_NOT_IMPLEMENTED)
+        if res == None:
+            return Response(status_code=status.HTTP_401_UNAUTHORIZED)
+
+        return Response(status_code=status.HTTP_200_OK)
+    except Exception as err:
+        # print(err)
         return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)
