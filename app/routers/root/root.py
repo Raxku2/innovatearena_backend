@@ -15,7 +15,7 @@ from datetime import datetime
 router = APIRouter(prefix="/root", tags=["Admin"])
 
 
-@router.get("/admins/attendance{root_id}")
+@router.get("/admins/attendance/{root_id}")
 def get_attendance(root_id: str):
     try:
         data = readAttendance(root_id)
