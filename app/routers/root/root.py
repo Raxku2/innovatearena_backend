@@ -1,12 +1,31 @@
 from fastapi import APIRouter, Response, status
 from fastapi.responses import JSONResponse, StreamingResponse
-from app.database.admin import showStatics, showAdmin, setAdmin, getRegInfo
+from app.database.admin import (
+    showStatics,
+    showAdmin,
+    setAdmin,
+    getRegInfo,
+    readAttendance,
+)
 from app.models.user import adminSetter
 from app.utils.csv_handeler import iter_csv
 from datetime import datetime
 
 
 router = APIRouter(prefix="/root", tags=["Admin"])
+
+
+@router.get("/admins/attendance{root_id}")
+def get_attendance(root_id: str):
+    try:
+        data = readAttendance(root_id)
+        return JSONResponse(data)
+    except Exception as err:
+        if err == "Unauth":
+            return Response(status_code=status.HTTP_401_UNAUTHORIZED)
+        print(f"{err} : while get attendance route")
+
+        return Response(status_code=status.HTTP_406_NOT_ACCEPTABLE)
 
 
 @router.get("/admins/{root_id}")

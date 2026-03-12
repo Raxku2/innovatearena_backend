@@ -15,32 +15,6 @@ from app.database.partner import (
 router = APIRouter(prefix="/user", tags=["User"])
 
 
-@router.get("/{user_id}")
-def get_user_info(user_id: str):
-    try:
-        res = showUserInfo(user_id)
-
-        if not res:
-            return Response(status_code=status.HTTP_404_NOT_FOUND)
-
-        return JSONResponse(res)
-    except Exception as err:
-        print(err)
-        return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)
-
-
-@router.put("/{user_id}")
-def put_user_info(user_id: str, payload: userInfo):
-    try:
-        res = updateUserInfo(user_id=user_id, data=payload)
-
-        if not res:
-            return Response(status_code=status.HTTP_304_NOT_MODIFIED)
-
-        return JSONResponse(res)
-    except Exception as err:
-        return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)
-
 
 @router.get("/partner/{partner_email}")
 def get_partner_info(partner_email: str):
@@ -125,4 +99,31 @@ def put_project(team_id: str, request: Request, payload: projectSubmit):
         return Response(status_code=status.HTTP_200_OK)
     except Exception as err:
         # print(err)
+        return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)
+
+
+@router.get("/{user_id}")
+def get_user_info(user_id: str):
+    try:
+        res = showUserInfo(user_id)
+
+        if not res:
+            return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+        return JSONResponse(res)
+    except Exception as err:
+        print(err)
+        return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)
+
+
+@router.put("/{user_id}")
+def put_user_info(user_id: str, payload: userInfo):
+    try:
+        res = updateUserInfo(user_id=user_id, data=payload)
+
+        if not res:
+            return Response(status_code=status.HTTP_304_NOT_MODIFIED)
+
+        return JSONResponse(res)
+    except Exception as err:
         return Response(status_code=status.HTTP_417_EXPECTATION_FAILED)

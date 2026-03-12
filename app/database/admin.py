@@ -8,6 +8,51 @@ from app.utils.mongo_id_handeler import (
 from collections import defaultdict
 
 
+def readAttendance(root_id: str):
+    try:
+        if not is_user_admin(root_id):
+            raise Exception("Unauth")
+        data = {}
+
+        data["2026"] = len(
+            convert_objectid_in_list(
+                user_coll.find({"batch": "2026", "present": True}, {"_id": 1})
+            )
+        )
+
+        data["2027"] = len(
+            convert_objectid_in_list(
+                user_coll.find({"batch": "2027", "present": True}, {"_id": 1})
+            )
+        )
+
+        data["2028"] = len(
+            convert_objectid_in_list(
+                user_coll.find({"batch": "2028", "present": True}, {"_id": 1})
+            )
+        )
+
+        data["2029"] = len(
+            convert_objectid_in_list(
+                user_coll.find({"batch": "2029", "present": True}, {"_id": 1})
+            )
+        )
+
+        data["2030"] = len(
+            convert_objectid_in_list(
+                user_coll.find({"batch": "2030", "present": True}, {"_id": 1})
+            )
+        )
+
+        # if not result:
+        #     return None
+
+        return data
+
+    except Exception as err:
+        raise Exception(f"{err} : while read admins")
+
+
 def showStatics(root_id: str):
     try:
         if not is_user_admin(root_id):

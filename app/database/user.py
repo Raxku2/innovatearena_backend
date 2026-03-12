@@ -69,7 +69,7 @@ def mark_attendence(team_id: str, request: Request):
             return None
 
         status = user_coll.update_many(
-            {"team_id": ObjectId(team_id)}, {"$set": {"present": True}}
+            {"team_id": ObjectId(team_id),"payment_status": True,"reg_status":True}, {"$set": {"present": True}}
         )
 
         if status.modified_count == 0:
@@ -91,7 +91,7 @@ def add_submits(team_id: str, data: projectSubmit, request: Request):
         project_data["project_id"] = ObjectId()
 
         status = user_coll.update_many(
-            {"team_id": ObjectId(team_id)}, {"$set": project_data}
+            {"team_id": ObjectId(team_id),"present": True}, {"$set": project_data}
         )
 
         if status.modified_count == 0:
