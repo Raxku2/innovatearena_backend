@@ -11,7 +11,7 @@ def iter_csv(data):
         return
 
     # Headers exactly matching the dictionary keys from getRegInfo()
-    fieldnames = ["team id", "name", "dept", "batch", "attendence"]
+    fieldnames = ["team id", "name", "dept", "batch", "phone", "attendence"]
     writer = csv.DictWriter(stream, fieldnames=fieldnames)
 
     # Write the header

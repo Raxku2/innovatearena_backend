@@ -164,7 +164,7 @@ def getRegInfo(root_id: str):
 
         data_cursor = user_coll.find(
             {"reg_status": True, "payment_status": True},
-            {"team_id": 1, "name": 1, "dept": 1, "batch": 1, "present": 1},
+            {"team_id": 1, "name": 1, "dept": 1, "batch": 1, "phone": 1, "present": 1},
         )
 
         # Initialize a dictionary to group by team_id
@@ -182,6 +182,7 @@ def getRegInfo(root_id: str):
                     "name": clean_user.get("name"),
                     "dept": clean_user.get("dept"),
                     "batch": clean_user.get("batch"),
+                    "phone": clean_user.get("phone"),
                     "present": clean_user.get("present"),
                 }
             )
@@ -203,6 +204,7 @@ def getRegInfo(root_id: str):
                         "name": member.get("name", ""),
                         "dept": member.get("dept", ""),
                         "batch": member.get("batch", ""),
+                        "phone": member.get("phone", ""),
                         "attendence": member.get(
                             "present", "TRUE"
                         ),  # mapping your 'present' key to 'attendence'
