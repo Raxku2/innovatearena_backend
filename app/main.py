@@ -8,19 +8,21 @@ from app.middilwares.cors import cors_middleware
 from app.database.connection import pingMongoDB_1
 from app.routers.event.event import router as EventRouter
 from app.routers.root.root import router as AdminRouter
+from app.routers.judge.judgement import router as JudgeRouter
 from app.utils.authhandeller import authenticate
 
 
 app = FastAPI(
     title="Innovatearena",
     version="pichu",
-    docs_url=None,
-    redoc_url=None,
+    # docs_url=None,
+    # redoc_url=None,
     # openapi_url=None,
 )
 
 cors_middleware(app)
 
+app.include_router(JudgeRouter)
 app.include_router(EventRouter)
 app.include_router(AuthRouter)
 app.include_router(UserRouter)
@@ -33,9 +35,9 @@ def root():
     return RedirectResponse("/docs")
 
 
-@app.get("/docs", include_in_schema=False)
-def protected_docs(user: str = Depends(authenticate)):
-    return get_swagger_ui_html(openapi_url="/openapi.json", title="Secure Docs")
+# @app.get("/docs", include_in_schema=False)
+# def protected_docs(user: str = Depends(authenticate)):
+#     return get_swagger_ui_html(openapi_url="/openapi.json", title="Secure Docs")
 
 
 @app.get("/health")
