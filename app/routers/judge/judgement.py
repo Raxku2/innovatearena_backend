@@ -12,11 +12,11 @@ from app.models.judgement import judgementType
 router = APIRouter(prefix="/judgement", tags=["Judge"])
 
 
-@router.get("/positions")
-def get_available_positions():
-    # kick a participant
+# @router.get("/positions")
+# def get_available_positions():
+#     # kick a participant
 
-    pass
+#     pass
 
 
 @router.post("/submit")

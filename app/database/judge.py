@@ -14,6 +14,50 @@ def get_all_positions():
     pass
 
 
+def check_positions():
+    try:
+
+        results = user_coll.find_one({"pos": 1}, {"team_id": 1})
+        print("running")
+
+        if results:
+            results = convert_objectid_in_doc(results)
+            event_coll.update_one(
+                {"_id": "event"}, {"$set": {"pos_A": results.get("team_id")}}
+            )
+        else:
+            event_coll.update_one({"_id": "event"}, {"$set": {"pos_A": None}})
+
+        del results
+
+        results = user_coll.find_one({"pos": 2}, {"team_id": 1})
+
+        if results:
+            results = convert_objectid_in_doc(results)
+            event_coll.update_one(
+                {"_id": "event"}, {"$set": {"pos_B": results.get("team_id")}}
+            )
+        else:
+            event_coll.update_one({"_id": "event"}, {"$set": {"pos_B": None}})
+
+        del results
+
+        results = user_coll.find_one({"pos": 3}, {"team_id": 1})
+
+        if results:
+            results = convert_objectid_in_doc(results)
+            event_coll.update_one(
+                {"_id": "event"}, {"$set": {"pos_C": results.get("team_id")}}
+            )
+        else:
+            event_coll.update_one({"_id": "event"}, {"$set": {"pos_C": None}})
+
+        del results
+
+    except Exception as err:
+        print(f"{err} : while update submit positions")
+
+
 def dismiss_a_submit(team_id: str):  # rejected
     try:
 
@@ -38,6 +82,7 @@ def update_a_submit(team_id: str, data: judgementType):
             {"team_id": ObjectId(team_id), "present": True},
             {"$set": judgement_data},
         )
+        check_positions()
 
         if results.matched_count == 0:
             return False
