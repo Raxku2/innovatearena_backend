@@ -8,6 +8,19 @@ from app.utils.mongo_id_handeler import (
 from collections import defaultdict
 
 
+def read_all_judges():
+    try:
+        result = user_coll.find({"judge": True}, {"email": 1, "_id": 0})
+
+        if not result:
+            return False
+
+        return convert_objectid_in_list(result)
+
+    except Exception as err:
+        raise Exception(f"{err} : while get judges")
+
+
 def removeJudge(judge_email: str):
     try:
         result = user_coll.update_one(
