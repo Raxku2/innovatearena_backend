@@ -8,6 +8,7 @@ from app.database.admin import (
     readAttendance,
     setJudge,
     removeJudge,
+    read_all_judges,
 )
 from app.models.user import adminSetter
 from app.utils.csv_handeler import iter_csv
@@ -15,6 +16,21 @@ from datetime import datetime
 
 
 router = APIRouter(prefix="/root", tags=["Admin"])
+
+
+@router.get("/admins/judge")
+def get_all_judge():
+    try:
+        res = read_all_judges()
+
+        if res:
+            return JSONResponse(res, status_code=status.HTTP_200_OK)
+        else:
+            return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+    except Exception as err:
+        print(err)
+        return Response(status_code=status.HTTP_406_NOT_ACCEPTABLE)
 
 
 @router.delete("/admins/judge")
@@ -25,7 +41,7 @@ def delete_judge(judge_email: str):
         if res:
             return Response(status_code=status.HTTP_200_OK)
         else:
-            return Response(status_code=status.HTTP_304_NOT_MODIFIED)
+            return Response(status_code=status.HTTP_204_NO_CONTENT)
 
     except Exception as err:
         print(err)
