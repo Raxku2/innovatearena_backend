@@ -8,6 +8,34 @@ from app.utils.mongo_id_handeler import (
 from collections import defaultdict
 
 
+def removeJudge(judge_email: str):
+    try:
+        result = user_coll.update_one(
+            {"email": judge_email}, {"$set": {"judge": False}}
+        )
+
+        if result.matched_count == 0:
+            return False
+
+        return True
+
+    except Exception as err:
+        raise Exception(f"{err} : while remove judge")
+
+
+def setJudge(judge_email: str):
+    try:
+        result = user_coll.update_one({"email": judge_email}, {"$set": {"judge": True}})
+
+        if result.matched_count == 0:
+            return False
+
+        return True
+
+    except Exception as err:
+        raise Exception(f"{err} : while make judge")
+
+
 def readAttendance(root_id: str):
     try:
         if not is_user_admin(root_id):

@@ -8,6 +8,7 @@ from app.middilwares.cors import cors_middleware
 from app.database.connection import pingMongoDB_1
 from app.routers.event.event import router as EventRouter
 from app.routers.root.root import router as AdminRouter
+from app.routers.judge.judgement import router as JudgeRouter
 from app.utils.authhandeller import authenticate
 
 
@@ -21,6 +22,7 @@ app = FastAPI(
 
 cors_middleware(app)
 
+app.include_router(JudgeRouter)
 app.include_router(EventRouter)
 app.include_router(AuthRouter)
 app.include_router(UserRouter)
