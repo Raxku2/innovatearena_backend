@@ -21,20 +21,29 @@ def showPartner(data: str) -> dict | None:
 def createPartner(data: partnerInfo, user_id: str):
     info_data = data.dict(exclude_unset=True, exclude_none=True)
 
-    if not info_data:
+    if not info_data.get("email"):
         raise ValueError("No data provided for update")
 
     try:
         partner_data = showPartner(info_data.get("email"))
-        if partner_data.get("payment_status") is True:
+
+        # FIX 1: Check if partner_data exists before checking payment status
+        if partner_data and partner_data.get("payment_status") is True:
             return False
 
         user_data = user_coll.find_one(
             {"_id": ObjectId(user_id)}, {"name": 1, "email": 1, "team_id": 1}
         )
 
+        # FIX 2: Check if user_data exists before proceeding
+        if not user_data:
+            raise Exception(f"User with ID {user_id} not found")
+
+        partner_id = None
+
         if partner_data:
-            partner_update_status = user_coll.update_one(
+            # Now safe to use user_data.get()
+            user_coll.update_one(
                 {"_id": ObjectId(partner_data.get("_id")), "pay_status": {"$ne": True}},
                 {
                     "$set": {
@@ -47,7 +56,7 @@ def createPartner(data: partnerInfo, user_id: str):
             )
             partner_id = partner_data.get("_id")
 
-        if not partner_data:
+        else:  # if not partner_data:
             partner_user_create_status = user_coll.insert_one(
                 {
                     "username": info_data.get("name"),
@@ -60,10 +69,12 @@ def createPartner(data: partnerInfo, user_id: str):
                     "team_id": user_data.get("team_id"),
                 }
             )
-            partner_id = str(partner_user_create_status.inserted_id)
+            partner_id = partner_user_create_status.inserted_id
 
         if not partner_id:
             return False
+
+        # ... rest of your code
 
         user_update_status = user_coll.update_one(
             {"_id": ObjectId(user_id)},
