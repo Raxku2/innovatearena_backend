@@ -20,9 +20,9 @@ router = APIRouter(prefix="/judgement", tags=["Judge"])
 
 
 @router.post("/submit")
-def elemenate_a_submit(team_id: str):
+def elemenate_a_submit(project_id: str):
     """kick a participant"""
-    res = dismiss_a_submit(team_id)
+    res = dismiss_a_submit(project_id)
     if not res:
         return Response(status_code=status.HTTP_304_NOT_MODIFIED)
 
@@ -32,9 +32,10 @@ def elemenate_a_submit(team_id: str):
 
 
 @router.patch("/submit")
-def update_a_judgement(team_id: str, payload: judgementType):
+def update_a_judgement(project_id: str, payload: judgementType):
     # update a participants submits from db
-    res = update_a_submit(team_id, payload)
+    # print("running 1")
+    res = update_a_submit(project_id, payload)
     if not res:
         return Response(status_code=status.HTTP_304_NOT_MODIFIED)
 

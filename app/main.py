@@ -11,12 +11,16 @@ from app.routers.root.root import router as AdminRouter
 from app.routers.judge.judgement import router as JudgeRouter
 from app.utils.authhandeller import authenticate
 
+from dotenv import load_dotenv
+from os import getenv
+
+load_dotenv()
 
 app = FastAPI(
     title="Innovatearena",
-    version="pichu",
-    # docs_url=None,
-    # redoc_url=None,
+    version=getenv("VERSION") if getenv("VERSION") else "Pikachu",
+    docs_url=None,
+    redoc_url=None,
     # openapi_url=None,
 )
 
@@ -35,9 +39,9 @@ def root():
     return RedirectResponse("/docs")
 
 
-# @app.get("/docs", include_in_schema=False)
-# def protected_docs(user: str = Depends(authenticate)):
-#     return get_swagger_ui_html(openapi_url="/openapi.json", title="Secure Docs")
+@app.get("/docs", include_in_schema=False)
+def protected_docs(user: str = Depends(authenticate)):
+    return get_swagger_ui_html(openapi_url="/openapi.json", title="Secure Docs")
 
 
 @app.get("/health")
