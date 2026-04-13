@@ -58,11 +58,11 @@ def check_positions():
         print(f"{err} : while update submit positions")
 
 
-def dismiss_a_submit(team_id: str):  # rejected
+def dismiss_a_submit(project_id: str):  # rejected
     try:
 
         results = user_coll.update_many(
-            {"team_id": ObjectId(team_id)},
+            {"project_id": ObjectId(project_id)},
             {"$set": {"rejected": True}},
         )
 
@@ -75,14 +75,19 @@ def dismiss_a_submit(team_id: str):  # rejected
         raise Exception(f"{err} : while reject a submit")
 
 
-def update_a_submit(team_id: str, data: judgementType):
+def update_a_submit(project_id: str, data: judgementType):
+    # print("running 2")
     try:
         judgement_data = data.dict(exclude_unset=True, exclude_none=True)
         results = user_coll.update_many(
-            {"team_id": ObjectId(team_id), "present": True},
+            {"project_id": ObjectId(project_id), "present": True},
             {"$set": judgement_data},
         )
+        # print("running 3")
+
         check_positions()
+
+        # print(results.acknowledged)
 
         if results.matched_count == 0:
             return False
@@ -104,6 +109,7 @@ def find_a_submit(team_id: str):
                 "marks": 1,
                 "pos": 1,
                 "project_id": 1,
+                "rejected": 1,
             },
         )
 
@@ -120,15 +126,21 @@ def find_all_submits():
                 # Filter 1: 'present' must be true
                 "present": True,
                 # Filter 2: 'judgement' is false, None, or doesn't exist
-                "$or": [
-                    {"judgement": False},
-                    {"judgement": None},
-                    {"judgement": {"$exists": False}},
-                ],
-                "$or": [
-                    {"rejected": False},
-                    {"rejected": None},
-                    {"rejected": {"$exists": False}},
+                "$and": [
+                    {
+                        "$or": [
+                            {"judgement": False},
+                            {"judgement": None},
+                            {"judgement": {"$exists": False}},
+                        ]
+                    },
+                    {
+                        "$or": [
+                            {"rejected": False},
+                            {"rejected": None},
+                            {"rejected": {"$exists": False}},
+                        ]
+                    },
                 ],
             }
         },
@@ -137,6 +149,7 @@ def find_all_submits():
                 "_id": "$team_id",
                 "team_docs": {
                     "$push": {
+                        # "team_id": "$team_id",
                         "project_id": "$project_id",
                         "project_title": "$project_title",
                         "deployment": "$deployment",
@@ -150,9 +163,9 @@ def find_all_submits():
 
     try:
         results = list(user_coll.aggregate(pipeline))
-        list_of_lists = [item["team_docs"] for item in results]
+        list_of_lists = convert_objectid_in_list(item["team_docs"] for item in results)
 
-        return convert_objectid_in_list(list_of_lists)
+        return list_of_lists
 
     except Exception as err:
         raise Exception(f"{err} : while get submits")
