@@ -63,7 +63,7 @@ def dismiss_a_submit(project_id: str):  # rejected
 
         results = user_coll.update_many(
             {"project_id": ObjectId(project_id)},
-            {"$set": {"rejected": True}},
+            {"$set": {"rejected": True, "pos": 0}},
         )
 
         if results.matched_count == 0:
