@@ -164,7 +164,7 @@ def find_all_submits():
     try:
         results = list(user_coll.aggregate(pipeline))
         list_of_lists = convert_objectid_in_list(item["team_docs"] for item in results)
-
+        check_positions()
         return list_of_lists
 
     except Exception as err:
@@ -193,6 +193,8 @@ def find_all_judged_submits():
                         "project_title": "$project_title",
                         "deployment": "$deployment",
                         "repo": "$repo",
+                        "marks": "$marks",
+                        "pos": "$pos",
                     }
                 },
             }
