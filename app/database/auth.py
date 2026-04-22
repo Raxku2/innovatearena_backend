@@ -16,9 +16,11 @@ def createUser(username: str, useremail: str, userdp: str, team_id: ObjectId):
                     "dp": userdp,
                     "type": "user",
                     "name": username,
-                    "team_id": team_id,
                     "account": True,  # Python boolean
-                }
+                },
+                "$setOnInsert": {
+                    "team_id": team_id,
+                },
             },
             upsert=True,
         )
