@@ -19,8 +19,8 @@ load_dotenv()
 app = FastAPI(
     title="Innovatearena",
     version=getenv("VERSION") if getenv("VERSION") else "Pikachu",
-    docs_url=None,
-    redoc_url=None,
+    # docs_url=None,
+    # redoc_url=None,
     # openapi_url=None,
 )
 
@@ -39,9 +39,9 @@ def root():
     return RedirectResponse("/docs")
 
 
-@app.get("/docs", include_in_schema=False)
-def protected_docs(user: str = Depends(authenticate)):
-    return get_swagger_ui_html(openapi_url="/openapi.json", title="Secure Docs")
+# @app.get("/docs", include_in_schema=False)
+# def protected_docs(user: str = Depends(authenticate)):
+#     return get_swagger_ui_html(openapi_url="/openapi.json", title="Secure Docs")
 
 
 @app.get("/health")
