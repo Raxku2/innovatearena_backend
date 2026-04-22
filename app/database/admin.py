@@ -204,57 +204,60 @@ def getRegInfo(root_id: str):
             raise Exception("Unauth")
 
         data_cursor = user_coll.find(
-            {"reg_status": True, "payment_status": True},
-            {"team_id": 1, "name": 1, "dept": 1, "batch": 1, "phone": 1, "present": 1},
+            {"payment_status": True},
+            {
+                "team_id": 1,
+                "name": 1,
+                "dept": 1,
+                "batch": 1,
+                "phone": 1,
+                "present": 1,
+                "reg_status": 1,
+            },
         )
 
         # Initialize a dictionary to group by team_id
         grouped_dict = defaultdict(list)
 
         for user in data_cursor:
-            # Use the helper to handle the ObjectId before grouping
-            # print(user)
+            # Clean the ObjectId
             clean_user = convert_objectid_in_doc(user)
             tid = clean_user.get("team_id")
 
-            # Append the user details to the specific team list
-            grouped_dict[tid].append(
-                {
-                    "name": clean_user.get("name"),
-                    "dept": clean_user.get("dept"),
-                    "batch": clean_user.get("batch"),
-                    "phone": clean_user.get("phone"),
-                    "present": clean_user.get("present"),
-                }
-            )
+            # Optimization: Just append the whole dictionary directly
+            # instead of recreating it key-by-key
+            grouped_dict[tid].append(clean_user)
 
         # Format the final output to match the flat CSV requirement with visual grouping
         data = []
         team_counter = 1
-
         for tid, members in grouped_dict.items():
             for index, member in enumerate(members):
-                # Apply the team index (1, 2, 3...) only to the first member (index 0)
-                # For all other members in the same team, leave it blank ("")
                 display_tid = team_counter if index == 0 else ""
 
-                # Create the flat row dictionary matching your exact CSV headers
+                # Safely extract values so we don't overwrite actual False booleans
+                reg_status = member.get("reg_status")
+                present_status = member.get("present")
+
                 data.append(
                     {
                         "team id": display_tid,
-                        "name": member.get("name", ""),
-                        "dept": member.get("dept", ""),
-                        "batch": member.get("batch", ""),
-                        "phone": member.get("phone", ""),
-                        "attendence": member.get(
-                            "present", "TRUE"
-                        ),  # mapping your 'present' key to 'attendence'
+                        "Name": member.get("name") or "",
+                        # If None or empty string, default to False. Otherwise, keep original value.
+                        "Profile": (False if reg_status in [None, ""] else reg_status),
+                        "DEPT": member.get("dept") or "",
+                        "Batch": member.get("batch") or "",
+                        "Phone": member.get("phone") or "",
+                        # If None or empty string, default to True. Otherwise, keep original value.
+                        "Attendence": (
+                            False if present_status in [None, ""] else present_status
+                        ),
                     }
                 )
 
-            # Increment the counter for the next team in the grouped_dict
             team_counter += 1
 
         return data
+
     except Exception as err:
         raise Exception(f"{err} : while make reg data")
